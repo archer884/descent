@@ -28,6 +28,7 @@ impl Args {
             .descent_angle
             .map(convert_descent_angle)
             .unwrap_or(BETA);
+
         let delta = (self.initial - self.target).abs();
         let horizontal_distance_in_feet = delta * climb_descent_angle.tan();
 
