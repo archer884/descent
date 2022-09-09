@@ -1,5 +1,11 @@
 use clap::Parser;
 
+// Standard three degree descent angle
+const BETA: f64 = 87.0 * std::f64::consts::PI / 180.0;
+
+// Length of nautical mile in feet
+const FEET_PER_NM: f64 = 6076.1155;
+
 #[derive(Debug, Parser)]
 struct Args {
     initial: f64,
@@ -18,21 +24,15 @@ impl Args {
     // Formula for the opposite leg of a right triangle:
     // b = a * tan(Beta)
     fn solve_for_delta(&self) -> f64 {
-        // Standard three degree descent angle
-        const BETA: f64 = 87.0 * std::f64::consts::PI / 180.0;
-
-        // Length of nautical mile in feet
-        const FEET_PER_NM: f64 = 6076.1155;
-
-        let climb_descent_angle = self
-            .descent_angle
-            .map(convert_descent_angle)
-            .unwrap_or(BETA);
-
         let delta = (self.initial - self.target).abs();
-        let horizontal_distance_in_feet = delta * climb_descent_angle.tan();
-
+        let horizontal_distance_in_feet = delta * self.climb_descend_angle().tan();
         horizontal_distance_in_feet / FEET_PER_NM
+    }
+
+    fn climb_descend_angle(&self) -> f64 {
+        self.descent_angle
+            .map(convert_descent_angle)
+            .unwrap_or(BETA)
     }
 }
 
