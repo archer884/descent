@@ -1,14 +1,20 @@
 use clap::Parser;
 
-// Standard three degree descent angle
+/// Standard three degree descent angle
 const BETA: f64 = 87.0 * std::f64::consts::PI / 180.0;
 
-// Length of nautical mile in feet
+/// Length of nautical mile in feet
 const FEET_PER_NM: f64 = 6076.1155;
 
 #[derive(Debug, Parser)]
+#[command(author, version, about)]
+/// Calculates top of descent for a given altitude, target altitude, and
+/// flight path angle.
 struct Args {
+    /// initial altitude
     initial: f64,
+
+    /// target altitude
     target: f64,
 
     /// desired descent angle
