@@ -18,13 +18,28 @@ struct Args {
     target: f64,
 
     /// desired descent angle
+    #[arg(short = 'a', long = "angle")]
     descent_angle: Option<f64>,
+
+    /// Provide groundspeed in knots and the program will print the approximate
+    /// descent rate required in feet per minute. You can also use true airspeed,
+    /// except of course head and tailwinds will mess it up. Indicated airspeed
+    /// will NOT work.
+    #[arg(short = 's', long = "speed")]
+    groundspeed: Option<f64>,
 }
 
 impl Args {
     fn run(&self) {
         let distance = self.solve_for_delta();
         println!("{distance:.02} NM");
+
+        if let Some(groundspeed) = self.groundspeed {
+            let time = distance / groundspeed;
+            let delta = (self.initial - self.target).abs();
+            let hundreds_of_feet_per_minute = (delta / time / 60.0 / 100.0).ceil();
+            println!("{:.0} fpm", hundreds_of_feet_per_minute * 100.0);
+        }
     }
 
     // Formula for the opposite leg of a right triangle:
